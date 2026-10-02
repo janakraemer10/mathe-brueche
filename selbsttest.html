@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selbsttest – Brüche Klasse 6</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;background:linear-gradient(135deg,#fff3e0 0%,#fbe9e7 100%);min-height:100vh;color:#333;padding:20px;line-height:1.6}
+.nav-top{text-align:right;margin-bottom:10px}
+.nav-top a{color:#e65100;text-decoration:none;font-size:14px;font-weight:600}
+.nav-top a:hover{text-decoration:underline}
+.container{max-width:860px;margin:0 auto}
+h1{text-align:center;color:#bf360c;font-size:28px;margin-bottom:4px}
+.subtitle{text-align:center;color:#e65100;font-size:16px;margin-bottom:24px;font-weight:500}
+.card{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);padding:24px;margin-bottom:20px}
+.card h2{font-size:20px;color:#bf360c;margin-bottom:16px;border-bottom:3px solid #e65100;padding-bottom:8px;display:inline-block}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-weight:600;margin-bottom:4px;color:#555;font-size:14px}
+.form-group select,.form-group input[type="text"]{width:100%;padding:12px 16px;border:2px solid #ddd;border-radius:10px;font-size:16px;transition:border-color .2s;background:#fff}
+.form-group select:focus,.form-group input[type="text"]:focus{outline:none;border-color:#e65100}
+.form-row{display:flex;gap:16px;flex-wrap:wrap}
+.form-row .form-group{flex:1;min-width:180px}
+.question{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #eee}
+.question:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.q-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:8px}
+.q-number{background:#e65100;color:#fff;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;margin-top:2px}
+.q-text{flex:1;font-size:16px;font-weight:500;padding-top:3px}
+.q-points{font-size:13px;color:#999;white-space:nowrap;padding-top:4px}
+.q-type-badge{display:inline-block;font-size:11px;background:#fff3e0;color:#e65100;padding:2px 10px;border-radius:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.options{margin-top:8px;padding-left:4px}
+.option{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;margin:4px 0;border-radius:10px;border:2px solid #eee;cursor:pointer;transition:all .15s;background:#fafafa}
+.option:hover{border-color:#ffcc80;background:#fff3e0}
+.option input[type="radio"],.option input[type="checkbox"]{margin-top:3px;accent-color:#e65100;width:18px;height:18px;cursor:pointer;flex-shrink:0}
+.option label{cursor:pointer;flex:1;font-size:15px;user-select:none}
+.option.correct{border-color:#2e7d32;background:#e8f5e9}
+.option.wrong{border-color:#c62828;background:#ffebee}
+.option.missed{border-color:#f9a825;background:#fff8e1;border-style:dashed}
+.order-list{list-style:none;padding:0}
+.order-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:6px 0;background:#fafafa;border:2px solid #eee;border-radius:10px;cursor:grab;transition:all .15s;user-select:none}
+.order-item:hover{border-color:#ffcc80;background:#fff3e0}
+.order-item .order-num{width:26px;height:26px;border-radius:50%;background:#fff3e0;color:#e65100;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.order-item .order-text{flex:1;font-size:15px}
+.order-btns{display:flex;flex-direction:column;gap:4px}
+.order-btns button{background:#fff3e0;border:none;border-radius:6px;width:28px;height:24px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:#e65100;transition:background .15s}
+.order-btns button:hover{background:#ffe0b2}
+.katex{font-size:1.05em}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:12px 28px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
+.btn-primary{background:#e65100;color:#fff}
+.btn-primary:hover{background:#bf360c;transform:translateY(-1px);box-shadow:0 4px 12px rgba(230,81,0,.35)}
+.btn-secondary{background:#fff3e0;color:#e65100}
+.btn-secondary:hover{background:#ffe0b2}
+.btn-success{background:#e65100;color:#fff}
+.btn-success:hover{background:#bf360c;box-shadow:0 4px 12px rgba(230,81,0,.3)}
+.btn-outline{background:transparent;border:2px solid #e65100;color:#e65100}
+.btn-outline:hover{background:#fff3e0}
+.btn-small{padding:8px 16px;font-size:13px;border-radius:8px}
+.btn-wrap{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;justify-content:center}
+.result-box{text-align:center;padding:24px;border-radius:16px;margin-top:16px}
+.result-box.good{background:#e8f5e9;border:2px solid #2e7d32}
+.result-box.ok{background:#fff8e1;border:2px solid #f9a825}
+.result-box.bad{background:#ffebee;border:2px solid #c62828}
+.result-box .score{font-size:48px;font-weight:800;color:#bf360c}
+.result-box .score-label{font-size:18px;color:#666;margin-top:4px}
+.result-box .feedback{font-size:18px;font-weight:600;margin-top:8px}
+.msg{display:none;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-weight:500}
+.msg.error{display:block;background:#ffebee;color:#c62828;border:1px solid #ef9a9a}
+.msg.success{display:block;background:#fff3e0;color:#e65100;border:1px solid #ffcc80}
+.hidden{display:none}
+.attempts-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+.attempts-table th,.attempts-table td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee}
+.attempts-table th{background:#fff3e0;color:#bf360c;font-weight:600;font-size:13px}
+.attempts-table tr:hover td{background:#f5f5f5}
+.solutions-wrap{margin-top:16px;padding:16px;background:#fafafa;border-radius:12px;border:1px solid #eee}
+.solution-item{padding:8px 0;border-bottom:1px solid #eee;font-size:14px}
+.solution-item:last-child{border-bottom:none}
+.solution-item strong{color:#bf360c}
+@media(max-width:600px){.container{padding:0}.form-row{flex-direction:column}.form-row .form-group{min-width:unset}.btn{padding:10px 20px;font-size:14px;width:100%;justify-content:center}.btn-wrap{flex-direction:column}.result-box .score{font-size:36px}.order-btns button{width:36px;height:32px}}
+</style>
+</head>
+<body>
+<div class="nav-top"><a href="index.html">&#x2190; Startseite</a></div>
+<div class="container">
+<h1>&#x1F9D8; Selbsttest Brüche &amp; Dezimalzahlen</h1>
+<p class="subtitle">Klasse 6 &middot; Bruch &middot; Hundertstel &middot; Dezimalzahl &middot; Vergleichen &middot; K&uuml;rzen &middot; Runden</p>
+
+<div id="msgBox" class="msg"></div>
+
+<div id="infoCard" class="card">
+  <h2>&#x1F464; Deine Angaben</h2>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="vorname">Vorname</label>
+      <input type="text" id="vorname" placeholder="Dein Vorname" autocomplete="given-name">
+    </div>
+    <div class="form-group">
+      <label for="kurs">Kurs</label>
+      <select id="kurs"><option value="">Bitte w&auml;hlen</option><option value="6a">6a</option><option value="6b">6b</option><option value="6c">6c</option><option value="6d">6d</option></select>
+    </div>
+  </div>
+  <div class="btn-wrap"><button class="btn btn-primary" onclick="startTest()">Test starten</button></div>
+</div>
+
+<div id="testCard" class="card hidden">
+  <h2>&#x1F4DD; Fragen</h2>
+  <div id="questionsContainer"></div>
+  <div class="btn-wrap" style="margin-top:20px">
+    <button class="btn btn-primary" onclick="evaluateTest()">Auswerten</button>
+    <button class="btn btn-outline btn-small" onclick="showAllSolutions()">Richtige Antworten anzeigen</button>
+  </div>
+</div>
+
+<div id="resultCard" class="card hidden">
+  <h2>&#x1F3C6; Ergebnis</h2>
+  <div id="resultContent"></div>
+  <div class="btn-wrap">
+    <button class="btn btn-secondary" onclick="resetTest()">Wiederholen</button>
+    <button class="btn btn-outline btn-small" onclick="toggleSolutions()">Richtige Antworten anzeigen</button>
+  </div>
+  <div id="solutionsArea" class="solutions-wrap hidden"></div>
+</div>
+
+<div id="attemptsCard" class="card hidden">
+  <h2>&#x1F4CB; Fr&uuml;here Versuche</h2>
+  <div style="overflow-x:auto"><table class="attempts-table" id="attemptsTable"><thead><tr><th>#</th><th>Name</th><th>Kurs</th><th>Datum</th><th>Punkte</th><th>Prozent</th></tr></thead><tbody id="attemptsBody"></tbody></table></div>
+</div>
+</div>
+
+<script>
+// ========== KaTeX Hilfsfunktion ==========
+function m(latex) {
+  try { return katex.renderToString(latex, {throwOnError:false,displayMode:false}); }
+  catch(e) { return '<span class="katex-error">'+latex+'</span>'; }
+}
+function renderMath(text) {
+  return text.replace(/m\('([^']*)'\)/g, function(_,z){return m(z);});
+}
+function stripMath(text) {
+  return text.replace(/m\('([^']*)'\)/g, '$1');
+}
+
+// ========== Firebase ==========
+// >>> FIREBASE-CONFIG: Hier die Werte deines neuen Projekts eintragen <<<
+const firebaseConfig = {
+  apiKey: "AIzaSyChuy_p2eHZRA8X2m-avfGqEB8tQ1jdqOY",
+  authDomain: "brueche-9e841.firebaseapp.com",
+  projectId: "brueche-9e841",
+  storageBucket: "brueche-9e841.firebasestorage.app",
+  messagingSenderId: "597865048513",
+  appId: "1:597865048513:web:1458c84c624b898ba62740"
+};
+firebase.initializeApp(firebaseConfig);
+const dbFire = firebase.firestore();
+
+const COLLECTION = 'brueche_selbsttest';
+
+// ========== Fragenkatalog ==========
+const QUESTIONS = [
+  {
+    id:1, type:"multiple-choice", points:1,
+    question:"Was bedeutet der Bruch m('\\frac{3}{8}')?",
+    options:["3 Teile von 8 Ganzen","3 von 8 gleichen Teilen eines Ganzen","8 von 3 Teilen","3 mal 8 Teile"],
+    correct:1,
+    explanation:"Der Z&auml;hler 3 sagt, wie viele Teile es sind, der Nenner 8, in wie viele gleiche Teile das Ganze geteilt wurde."
+  },
+  {
+    id:2, type:"true-false", points:1,
+    question:"Der Hundertstelbruch m('\\frac{5}{100}') kann man als 0,5 schreiben.",
+    correct:false,
+    explanation:"Nein, es gilt m('\\frac{5}{100} = 0{,}05'). Die 5 steht an der Hundertstelstelle."
+  },
+  {
+    id:3, type:"dropdown", points:1,
+    question:"Welche Dezimalzahl geh&ouml;rt zu m('\\frac{45}{100}')?",
+    options:["0,45","4,5","0,045","45"],
+    correct:0,
+    explanation:"45 Hundertstel sind 45 Zehntel und 5 Hundertstel: m('\\frac{45}{100} = 0{,}45')."
+  },
+  {
+    id:4, type:"multi-select", points:1,
+    question:"Welche Br&uuml;che sind alle gleich gro&szlig;?",
+    options:["m('\\frac{1}{2}')","m('\\frac{2}{4}')","m('\\frac{3}{6}')","m('\\frac{4}{8}')","m('\\frac{2}{5}')"],
+    correct:[0,1,2,3],
+    explanation:"K&uuml;rzen liefert bei allen vier Br&uuml;chen m('\\frac{1}{2}'). m('\\frac{2}{5}') ist kleiner, weil der Z&auml;hler nur 2 betr&auml;gt."
+  },
+  {
+    id:5, type:"multiple-choice", points:1,
+    question:"Wie schreibt man die Dezimalzahl 0,3 als Bruch?",
+    options:["m('\\frac{3}{100}')","m('\\frac{3}{10}')","m('\\frac{30}{100}')","m('\\frac{3}{1}')"],
+    correct:2,
+    explanation:"0,3 sind 3 Zehntel, das sind 30 Hundertstel: m('0{,}3 = \\frac{3}{10} = \\frac{30}{100}')."
+  },
+  {
+    id:6, type:"true-false", points:1,
+    question:"Der Bruch m('\\frac{7}{5}') ist gr&ouml;&szlig;er als 1.",
+    correct:true,
+    explanation:"Ja, denn es sind 7 von 5 Teilen &ndash; also mehr als ein Ganzes: m('\\frac{7}{5} = 1{,}4')."
+  },
+  {
+    id:7, type:"dropdown", points:1,
+    question:"Wie gro&szlig; ist m('\\frac{1}{4}') als Dezimalzahl?",
+    options:["0,25","0,4","2,5","1,4"],
+    correct:0,
+    explanation:"Erweitern: m('\\frac{1}{4} = \\frac{25}{100} = 0{,}25')."
+  },
+  {
+    id:8, type:"ordering", points:1,
+    question:"Bringe die Schritte in die richtige Reihenfolge, um m('\\frac{3}{5}') in eine Dezimalzahl umzuwandeln:",
+    options:["Den Hundertstelbruch notieren","Den Bruch auf den Nenner 100 erweitern","Den Bruch abschreiben"],
+    correctOrder:[2,1,0],
+    explanation:"Erweitern auf 100 und ablesen: m('\\frac{3}{5} = \\frac{60}{100} = 0{,}6')."
+  },
+  {
+    id:9, type:"multiple-choice", points:1,
+    question:"Wie lautet m('\\frac{4}{5}') mit dem Nenner 100?",
+    options:["m('\\frac{40}{100}')","m('\\frac{80}{100}')","m('\\frac{20}{100}')","m('\\frac{4}{100}')"],
+    correct:1,
+    explanation:"m('\\frac{4}{5} \\times \\frac{20}{20} = \\frac{80}{100}'). Beim Erweitern werden Z&auml;hler und Nenner mit 20 malgenommen."
+  },
+  {
+    id:10, type:"true-false", points:1,
+    question:"Die Dezimalzahl 0,6 ist gr&ouml;&szlig;er als 0,55.",
+    correct:true,
+    explanation:"Ja, vergleiche zuerst die Zehntel: 6 Zehntel sind mehr als 5 Zehntel."
+  },
+  {
+    id:11, type:"multiple-choice", points:1,
+    question:"Welche Dezimalzahl liest man als &bdquo;null Komma null sieben&ldquo;?",
+    options:["0,7","0,07","7","0,007"],
+    correct:1,
+    explanation:"Die erste Stelle nach dem Komma ist das Zehntel, die zweite das Hundertstel."
+  },
+  {
+    id:12, type:"multi-select", points:1,
+    question:"Welche Zahlen liegen zwischen 0,5 und 0,6?",
+    options:["0,55","0,501","0,75","0,49"],
+    correct:[0,1],
+    explanation:"Alle Zahlen zwischen 0,5 und 0,6 beginnen mit 5 Zehnteln und einem Hundertstel gr&ouml;&szlig;er als 0. 0,49 ist kleiner, 0,75 ist gr&ouml;&szlig;er."
+  },
+  {
+    id:13, type:"dropdown", points:1,
+    question:"Auf welche Zahl rundet man 3,75 auf Zehntel?",
+    options:["3,7","3,8","3,6","4,7"],
+    correct:1,
+    explanation:"Die Hundertstelzahl 5 ist gr&ouml;&szlig;er als die H&auml;lfte, also wird aufgerundet: 3,75 &asymp; 3,8."
+  },
+  {
+    id:14, type:"multiple-choice", points:1,
+    question:"Ein Liter Milch wiegt 1,02 kg. Wie viel Kilogramm wiegen 5 Liter?",
+    options:["5,1 kg","5,02 kg","51 kg","0,51 kg"],
+    correct:0,
+    explanation:"m('5 \\times 1{,}02 = 5{,}1') kg."
+  },
+  {
+    id:15, type:"true-false", points:1,
+    question:"Verdoppelt man Z&auml;hler und Nenner, wird der Bruch kleiner.",
+    correct:false,
+    explanation:"Nein, der Bruch bleibt gleich gro&szlig;: m('\\frac{2}{3} = \\frac{4}{6}'). Das hei&szlig;t Erweitern."
+  },
+  {
+    id:16, type:"multiple-choice", points:1,
+    question:"Welcher Bruch ist gleich gro&szlig; wie 0,25?",
+    options:["m('\\frac{1}{4}')","m('\\frac{1}{2}')","m('\\frac{1}{5}')","m('\\frac{2}{5}')"],
+    correct:0,
+    explanation:"m('0{,}25 = \\frac{25}{100} = \\frac{1}{4}')."
+  },
+  {
+    id:17, type:"multiple-choice", points:1,
+    question:"Wie viele Hundertstel sind in 6,07?",
+    options:["607","67","60,7","6,07"],
+    correct:0,
+    explanation:"6 Zehntel und 7 Hundertstel: m('6{,}07 = \\frac{607}{100}')."
+  },
+  {
+    id:18, type:"dropdown", points:1,
+    question:"Wie lautet m('\\frac{1}{8}') als Dezimalzahl?",
+    options:["0,125","0,8","1,25","0,15"],
+    correct:0,
+    explanation:"Auf Tausendstel erweitern: m('\\frac{1}{8} = \\frac{125}{1000} = 0{,}125')."
+  },
+  {
+    id:19, type:"ordering", points:1,
+    question:"Ordne die Zahlen von klein nach gr&ouml;&szlig;:",
+    options:["0,5","0,05","0,55","0,005"],
+    correctOrder:[3,1,0,2],
+    explanation:"Man vergleicht zuerst die Zehntel, dann die Hundertstel: m('0{,}005 < 0{,}05 < 0{,}5 < 0{,}55')."
+  },
+  {
+    id:20, type:"multiple-choice", points:1,
+    question:"Ein Getr&auml;nke kostet 20 &euro;. Der Preis sinkt um 50&nbsp;%. Wie viel kostet es jetzt?",
+    options:["10 &euro;","15 &euro;","5 &euro;","20 &euro;"],
+    correct:0,
+    explanation:"50&nbsp;% sind die H&auml;lfte, also 10 &euro; Rabatt: m('20 - 10 = 10') &euro;."
+  }
+];
+
+// ========== Zustand ==========
+let currentAnswers = {};
+let evaluated = false;
+let showingSolutions = false;
+let attempts = JSON.parse(localStorage.getItem('bruecheSelbsttestVersuche') || '[]');
+
+// ========== Test starten ==========
+function startTest() {
+  const name = document.getElementById('vorname').value.trim();
+  const kurs = document.getElementById('kurs').value;
+  const msg = document.getElementById('msgBox');
+  msg.className = 'msg';
+  msg.style.display = 'none';
+
+  if (!name) { showMsg('Bitte gib deinen Vornamen ein.', 'error'); return; }
+  if (!kurs) { showMsg('Bitte w&auml;hle deinen Kurs.', 'error'); return; }
+
+  document.getElementById('infoCard').classList.add('hidden');
+  document.getElementById('testCard').classList.remove('hidden');
+  renderQuestions();
+}
+
+function showMsg(text, type) {
+  const box = document.getElementById('msgBox');
+  box.innerHTML = text;
+  box.className = 'msg ' + type;
+  box.style.display = 'block';
+}
+
+// ========== Fragen rendern ==========
+function renderQuestions() {
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  currentAnswers = {};
+
+  QUESTIONS.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.dataset.qid = q.id;
+
+    const typeLabel = { 'multiple-choice':'Multiple Choice','true-false':'Wahr/Falsch','dropdown':'L&uuml;ckentext','multi-select':'Mehrfachauswahl','ordering':'Reihenfolge' }[q.type] || q.type;
+
+    let html = `<div class="q-header">
+      <span class="q-number">${i+1}</span>
+      <span class="q-text">${renderMath(q.question)}</span>
+      <span class="q-points">${q.points} P.</span>
+    </div>
+    <span class="q-type-badge">${typeLabel}</span>
+    <div class="options" id="opts-${q.id}">`;
+
+    if (q.type === 'multiple-choice') {
+      q.options.forEach((opt, oi) => {
+        html += `<div class="option"><input type="radio" name="q${q.id}" value="${oi}" id="q${q.id}_${oi}" data-qid="${q.id}"><label for="q${q.id}_${oi}">${renderMath(opt)}</label></div>`;
+      });
+    } else if (q.type === 'true-false') {
+      html += `<div class="option"><input type="radio" name="q${q.id}" value="true" id="q${q.id}_t" data-qid="${q.id}"><label for="q${q.id}_t">Wahr</label></div>`;
+      html += `<div class="option"><input type="radio" name="q${q.id}" value="false" id="q${q.id}_f" data-qid="${q.id}"><label for="q${q.id}_f">Falsch</label></div>`;
+    } else if (q.type === 'dropdown') {
+      html += `<select data-qid="${q.id}" style="width:100%;padding:10px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;margin-top:4px;background:#fff">`;
+      html += `<option value="">Bitte w&auml;hlen</option>`;
+      q.options.forEach((opt, oi) => {
+        html += `<option value="${oi}">${renderMath(opt)}</option>`;
+      });
+      html += `</select>`;
+    } else if (q.type === 'multi-select') {
+      q.options.forEach((opt, oi) => {
+        html += `<div class="option"><input type="checkbox" name="q${q.id}" value="${oi}" id="q${q.id}_${oi}" data-qid="${q.id}"><label for="q${q.id}_${oi}">${renderMath(opt)}</label></div>`;
+      });
+    } else if (q.type === 'ordering') {
+      const shuffled = shuffleArray([...Array(q.options.length).keys()]);
+      html += `<ul class="order-list" data-qid="${q.id}" id="order-${q.id}">`;
+      shuffled.forEach((origIdx, pos) => {
+        html += `<li class="order-item" data-orig-idx="${origIdx}" data-pos="${pos}">
+          <span class="order-num">${pos+1}</span>
+          <span class="order-text">${renderMath(q.options[origIdx])}</span>
+          <span class="order-btns">
+            <button type="button" onclick="moveOrderItem(${q.id},${pos},-1)" title="nach oben">&uarr;</button>
+            <button type="button" onclick="moveOrderItem(${q.id},${pos},1)" title="nach unten">&darr;</button>
+          </span>
+        </li>`;
+      });
+      html += `</ul>`;
+    }
+
+    html += `</div>`;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ========== Ordering verschieben ==========
+function moveOrderItem(qId, pos, dir) {
+  const list = document.getElementById('order-' + qId);
+  const items = list.querySelectorAll('.order-item');
+  const newPos = pos + dir;
+  if (newPos < 0 || newPos >= items.length) return;
+
+  const itemA = items[pos];
+  const itemB = items[newPos];
+  if (!itemA || !itemB) return;
+
+  if (dir < 0) {
+    list.insertBefore(itemA, itemB);
+  } else {
+    list.insertBefore(itemB, itemA);
+  }
+  updateOrderNumbers(qId);
+}
+
+function updateOrderNumbers(qId) {
+  const list = document.getElementById('order-' + qId);
+  const items = list.querySelectorAll('.order-item');
+  items.forEach((item, idx) => {
+    item.querySelector('.order-num').textContent = idx + 1;
+    item.dataset.pos = idx;
+  });
+}
+
+// ========== Auswerten ==========
+function evaluateTest() {
+  const name = document.getElementById('vorname').value.trim();
+  const kurs = document.getElementById('kurs').value;
+  if (!name || !kurs) { showMsg('Bitte gib zuerst deinen Namen und Kurs an.', 'error'); return; }
+
+  evaluated = true;
+  showingSolutions = false;
+  collectAnswers();
+  let score = 0;
+  const maxScore = QUESTIONS.reduce((s, q) => s + q.points, 0);
+
+  QUESTIONS.forEach(q => {
+    const userAns = currentAnswers[q.id];
+    const optsDiv = document.getElementById('opts-' + q.id);
+    if (!optsDiv) return;
+
+    optsDiv.querySelectorAll('.option').forEach(el => {
+      el.classList.remove('correct', 'wrong', 'missed');
+    });
+
+    const isCorrect = checkAnswer(q, userAns);
+
+    if (isCorrect) {
+      score += q.points;
+    }
+
+    markQuestion(q, userAns, optsDiv);
+  });
+
+  const percent = Math.round((score / maxScore) * 100);
+  const datum = new Date().toLocaleString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+
+  showResult(score, maxScore, percent, name, kurs, datum);
+
+  const attempt = { name, kurs, datum, punktzahl:score, prozent:percent };
+  attempts.unshift(attempt);
+  if (attempts.length > 20) attempts = attempts.slice(0, 20);
+  localStorage.setItem('bruecheSelbsttestVersuche', JSON.stringify(attempts));
+  renderAttempts();
+
+  sendToFirebase(name, kurs, score, maxScore, percent, datum);
+
+  document.getElementById('resultCard').scrollIntoView({ behavior:'smooth' });
+}
+
+function collectAnswers() {
+  currentAnswers = {};
+  QUESTIONS.forEach(q => {
+    if (q.type === 'multiple-choice' || q.type === 'true-false') {
+      const sel = document.querySelector(`input[name="q${q.id}"]:checked`);
+      if (sel) {
+        const val = q.type === 'true-false' ? (sel.value === 'true') : parseInt(sel.value);
+        currentAnswers[q.id] = val;
+      }
+    } else if (q.type === 'dropdown') {
+      const sel = document.querySelector(`select[data-qid="${q.id}"]`);
+      if (sel && sel.value !== '') {
+        currentAnswers[q.id] = parseInt(sel.value);
+      }
+    } else if (q.type === 'multi-select') {
+      const checks = document.querySelectorAll(`input[name="q${q.id}"]:checked`);
+      currentAnswers[q.id] = Array.from(checks).map(c => parseInt(c.value));
+    } else if (q.type === 'ordering') {
+      const items = document.querySelectorAll(`#order-${q.id} .order-item`);
+      currentAnswers[q.id] = Array.from(items).map(item => parseInt(item.dataset.origIdx));
+    }
+  });
+}
+
+function checkAnswer(q, userAns) {
+  if (userAns === undefined || userAns === null || userAns === '' || (Array.isArray(userAns) && userAns.length === 0)) return false;
+
+  if (q.type === 'multiple-choice' || q.type === 'true-false' || q.type === 'dropdown') {
+    return userAns === q.correct;
+  } else if (q.type === 'multi-select') {
+    if (!Array.isArray(userAns) || !Array.isArray(q.correct)) return false;
+    if (userAns.length !== q.correct.length) return false;
+    const sorted1 = [...userAns].sort();
+    const sorted2 = [...q.correct].sort();
+    return sorted1.every((v, i) => v === sorted2[i]);
+  } else if (q.type === 'ordering') {
+    if (!Array.isArray(userAns) || !Array.isArray(q.correctOrder)) return false;
+    return userAns.every((v, i) => v === q.correctOrder[i]);
+  }
+  return false;
+}
+
+function markQuestion(q, userAns, optsDiv) {
+  if (q.type === 'multiple-choice') {
+    optsDiv.querySelectorAll('.option').forEach((opt, oi) => {
+      const radio = opt.querySelector('input');
+      if (oi === q.correct) opt.classList.add('correct');
+      if (radio && radio.checked && oi !== q.correct) opt.classList.add('wrong');
+    });
+  } else if (q.type === 'true-false') {
+    optsDiv.querySelectorAll('.option').forEach((opt) => {
+      const radio = opt.querySelector('input');
+      const val = radio.value === 'true';
+      if (val === q.correct && !radio.checked) opt.classList.add('missed');
+      if (radio && radio.checked && val !== q.correct) opt.classList.add('wrong');
+      if (val === q.correct && radio.checked) opt.classList.add('correct');
+    });
+  } else if (q.type === 'dropdown') {
+    const sel = optsDiv.querySelector('select');
+    if (sel) {
+      if (sel.value !== '' && parseInt(sel.value) === q.correct) {
+        sel.style.borderColor = '#2e7d32';
+        sel.style.background = '#e8f5e9';
+      } else if (sel.value !== '') {
+        sel.style.borderColor = '#c62828';
+        sel.style.background = '#ffebee';
+      }
+    }
+  } else if (q.type === 'multi-select') {
+    optsDiv.querySelectorAll('.option').forEach((opt, oi) => {
+      const cb = opt.querySelector('input');
+      const isCorrect = q.correct.includes(oi);
+      if (cb && cb.checked && !isCorrect) opt.classList.add('wrong');
+      if (isCorrect && cb && cb.checked) opt.classList.add('correct');
+      if (isCorrect && cb && !cb.checked) opt.classList.add('missed');
+    });
+  } else if (q.type === 'ordering') {
+    const isCorrect = checkAnswer(q, userAns);
+    const list = optsDiv.querySelector('.order-list');
+    if (list) {
+      if (isCorrect) {
+        list.style.border = '2px solid #2e7d32';
+        list.style.borderRadius = '10px';
+        list.style.padding = '4px';
+      } else {
+        list.style.border = '2px solid #c62828';
+        list.style.borderRadius = '10px';
+        list.style.padding = '4px';
+        let hint = '<div style="font-size:13px;color:#2e7d32;margin-top:8px;padding:8px;background:#e8f5e9;border-radius:8px"><strong>Richtige Reihenfolge:</strong> ';
+        const correctItems = q.correctOrder.map(idx => stripMath(q.options[idx]));
+        hint += correctItems.map((t, ix) => (ix + 1) + '. ' + t).join(' &rarr; ');
+        hint += '</div>';
+        list.insertAdjacentHTML('afterend', hint);
+      }
+    }
+  }
+}
+
+// ========== Ergebnis anzeigen ==========
+function showResult(score, maxScore, percent, name, kurs, datum) {
+  document.getElementById('testCard').classList.add('hidden');
+  const rc = document.getElementById('resultCard');
+  rc.classList.remove('hidden');
+  document.getElementById('attemptsCard').classList.remove('hidden');
+
+  let feedback, cls;
+  if (percent >= 80) { feedback = '&#x1F389; Super gemacht! Du hast die Themen gut verstanden.'; cls = 'good'; }
+  else if (percent >= 60) { feedback = '&#x1F44D; Nicht schlecht! &Uuml;be noch ein wenig.'; cls = 'ok'; }
+  else { feedback = '&#x1F4AA; &Uuml;be weiter! Schau dir die richtigen Antworten an.'; cls = 'bad'; }
+
+  document.getElementById('resultContent').innerHTML = `
+    <div class="result-box ${cls}">
+      <div class="score">${score} / ${maxScore}</div>
+      <div class="score-label">${percent}% der Punkte erreicht</div>
+      <div class="feedback">${feedback}</div>
+      <div style="margin-top:8px;font-size:14px;color:#666">${escHtml(name)} &middot; Kurs ${escHtml(kurs)} &middot; ${datum}</div>
+    </div>`;
+}
+
+function toggleSolutions() {
+  showingSolutions = !showingSolutions;
+  document.getElementById('solutionsArea').classList.toggle('hidden', !showingSolutions);
+  if (showingSolutions) renderSolutions();
+}
+
+function showAllSolutions() {
+  showingSolutions = true;
+  document.getElementById('solutionsArea').classList.remove('hidden');
+  renderSolutions();
+}
+
+function renderSolutions() {
+  const area = document.getElementById('solutionsArea');
+  let html = '<h3 style="margin-bottom:10px;color:#bf360c">&#x1F4A1; Richtige Antworten</h3>';
+  QUESTIONS.forEach((q, i) => {
+    const userAns = currentAnswers[q.id];
+    const isCorrect = userAns !== undefined ? checkAnswer(q, userAns) : false;
+    const icon = isCorrect ? '&#x2705;' : '&#x274C;';
+    let correctStr = '';
+    if (q.type === 'multiple-choice') {
+      correctStr = renderMath(q.options[q.correct]);
+    } else if (q.type === 'true-false') {
+      correctStr = q.correct ? 'Wahr' : 'Falsch';
+    } else if (q.type === 'dropdown') {
+      correctStr = renderMath(q.options[q.correct]);
+    } else if (q.type === 'multi-select') {
+      correctStr = q.correct.map(idx => renderMath(q.options[idx])).join(', ');
+    } else if (q.type === 'ordering') {
+      correctStr = q.correctOrder.map(idx => renderMath(q.options[idx])).join(' &rarr; ');
+    }
+    html += `<div class="solution-item">${icon} <strong>${i+1}.</strong> ${renderMath(q.question)}<br><span style="margin-left:24px;color:#e65100">${correctStr}</span>`;
+    if (q.explanation && !isCorrect) {
+      html += `<br><span style="margin-left:24px;font-size:13px;color:#666">${q.explanation}</span>`;
+    }
+    html += `</div>`;
+  });
+  area.innerHTML = html;
+}
+
+// ========== Firebase senden ==========
+function sendToFirebase(name, kurs, punktzahl, maxPunkte, prozent, datum) {
+  const expireAt = new Date();
+  expireAt.setFullYear(expireAt.getFullYear() + 1);
+  dbFire.collection(COLLECTION).add({
+    name,
+    kurs,
+    punkte: punktzahl,
+    maxPunkte,
+    prozent,
+    datum,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    expireAt
+  }).then(() => {
+    showMsg('Dein Ergebnis wurde gespeichert.', 'success');
+  }).catch(err => console.warn('Firebase-Fehler:', err));
+}
+
+// ========== Versuche-Tabelle ==========
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : s;
+  return d.innerHTML;
+}
+
+function renderAttempts() {
+  const tbody = document.getElementById('attemptsBody');
+  if (attempts.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;padding:20px">Noch keine Versuche.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = attempts.map((a, i) =>
+    `<tr><td>${i+1}</td><td>${escHtml(a.name)}</td><td>${escHtml(a.kurs)}</td><td>${escHtml(a.datum)}</td><td>${a.punktzahl}</td><td>${a.prozent}%</td></tr>`
+  ).join('');
+}
+
+// ========== Reset ==========
+function resetTest() {
+  evaluated = false;
+  showingSolutions = false;
+  currentAnswers = {};
+  document.getElementById('testCard').classList.add('hidden');
+  document.getElementById('resultCard').classList.add('hidden');
+  document.getElementById('solutionsArea').classList.add('hidden');
+  document.getElementById('attemptsCard').classList.add('hidden');
+  document.getElementById('infoCard').classList.remove('hidden');
+  document.getElementById('questionsContainer').innerHTML = '';
+}
+
+// ========== Initialisierung ==========
+const savedName = localStorage.getItem('bruecheSelbsttestName');
+const savedKurs = localStorage.getItem('bruecheSelbsttestKurs');
+if (savedName) document.getElementById('vorname').value = savedName;
+if (savedKurs) document.getElementById('kurs').value = savedKurs;
+document.getElementById('vorname').addEventListener('input', function() {
+  localStorage.setItem('bruecheSelbsttestName', this.value);
+});
+document.getElementById('kurs').addEventListener('change', function() {
+  localStorage.setItem('bruecheSelbsttestKurs', this.value);
+});
+
+renderAttempts();
+
+document.getElementById('vorname').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') startTest();
+});
+</script>
+</body>
+</html>

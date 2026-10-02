@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkliste – Brüche Klasse 6</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;background:linear-gradient(135deg,#fff3e0 0%,#fbe9e7 100%);min-height:100vh;color:#333;padding:20px;line-height:1.6}
+.nav-top{text-align:right;margin-bottom:10px}
+.nav-top a{color:#e65100;text-decoration:none;font-size:14px;font-weight:600}
+.nav-top a:hover{text-decoration:underline}
+.container{max-width:860px;margin:0 auto}
+h1{text-align:center;color:#bf360c;font-size:28px;margin-bottom:4px}
+.subtitle{text-align:center;color:#e65100;font-size:16px;margin-bottom:24px;font-weight:500}
+.card{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);padding:24px;margin-bottom:20px}
+.card h2{font-size:20px;color:#bf360c;margin-bottom:16px;border-bottom:3px solid #e65100;padding-bottom:8px;display:inline-block}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-weight:600;margin-bottom:4px;color:#555;font-size:14px}
+.form-group select,.form-group input[type="text"]{width:100%;padding:12px 16px;border:2px solid #ddd;border-radius:10px;font-size:16px;transition:border-color .2s;background:#fff}
+.form-group select:focus,.form-group input[type="text"]:focus{outline:none;border-color:#e65100}
+.form-row{display:flex;gap:16px;flex-wrap:wrap}
+.form-row .form-group{flex:1;min-width:180px}
+.katex{font-size:1.05em}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:12px 28px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
+.btn-primary{background:#e65100;color:#fff}
+.btn-primary:hover{background:#bf360c;transform:translateY(-1px);box-shadow:0 4px 12px rgba(230,81,0,.35)}
+.btn-secondary{background:#fff3e0;color:#e65100}
+.btn-secondary:hover{background:#ffe0b2;transform:translateY(-1px)}
+.btn-danger{background:#c62828;color:#fff}
+.btn-danger:hover{background:#b71c1c}
+.btn-small{padding:8px 16px;font-size:13px;border-radius:8px}
+.btn-wrap{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;justify-content:center}
+.msg{display:none;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-weight:500}
+.msg.error{display:block;background:#ffebee;color:#c62828;border:1px solid #ef9a9a}
+.msg.success{display:block;background:#fff3e0;color:#e65100;border:1px solid #ffcc80}
+.hidden{display:none}
+.niveau-badge{display:inline-block;font-size:11px;background:#fff3e0;color:#e65100;padding:2px 10px;border-radius:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.item{margin-bottom:16px;padding:14px 16px;border-radius:12px;border:2px solid #eee;background:#fafafa;transition:border-color .15s}
+.item:hover{border-color:#ffcc80}
+.item-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.item-num{background:#e65100;color:#fff;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;margin-top:1px}
+.item-text{flex:1;font-size:15px;font-weight:500;padding-top:3px}
+.item-options{display:flex;gap:16px;padding-left:36px}
+.item-options label{display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;padding:6px 14px;border-radius:8px;border:2px solid #eee;transition:all .15s;user-select:none}
+.item-options label:hover{border-color:#ffcc80;background:#fff3e0}
+.item-options input[type="radio"]{accent-color:#e65100;width:17px;height:17px;cursor:pointer}
+.item-options label.selected-yes{border-color:#2e7d32;background:#e8f5e9}
+.item-options label.selected-no{border-color:#c62828;background:#ffebee}
+.result-box{text-align:center;padding:24px;border-radius:16px;margin-top:16px}
+.result-box.good{background:#e8f5e9;border:2px solid #2e7d32}
+.result-box.ok{background:#fff8e1;border:2px solid #f9a825}
+.result-box.bad{background:#ffebee;border:2px solid #c62828}
+.result-box .score{font-size:42px;font-weight:800;color:#bf360c}
+.result-box .score-label{font-size:16px;color:#555;margin-top:4px}
+.result-box .detail{margin-top:12px;font-size:14px;color:#666}
+.result-box .detail span{display:inline-block;margin:0 8px}
+.progress-bar{height:10px;background:#eee;border-radius:5px;overflow:hidden;margin-bottom:20px}
+.progress-bar .fill{height:100%;background:#e65100;border-radius:5px;transition:width .3s}
+.attempts-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+.attempts-table th,.attempts-table td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee}
+.attempts-table th{background:#fff3e0;color:#bf360c;font-weight:600;font-size:13px}
+.attempts-table tr:hover td{background:#f5f5f5}
+@media(max-width:600px){.container{padding:0}h1{font-size:24px}.card{padding:16px}.item-options{gap:8px;padding-left:0;flex-direction:column}.item-options label{flex:1}}
+</style>
+</head>
+<body>
+<div class="nav-top"><a href="index.html">&larr; Startseite</a></div>
+<div class="container">
+<h1>&#x1F9D8; Checkliste Brüche Klasse 6</h1>
+<p class="subtitle">Selbsteinsch&auml;tzung &ndash; Kreuze an, was du schon kannst!</p>
+
+<div id="msgBox" class="msg"></div>
+
+<div class="card">
+<h2>&#x1F3E0; Deine Angaben</h2>
+<div class="form-row">
+<div class="form-group">
+<label for="name">Vorname und Nachname</label>
+<input type="text" id="name" placeholder="z. B. Max Mustermann" autocomplete="name">
+</div>
+<div class="form-group">
+<label for="kurs">Kurs</label>
+<select id="kurs">
+<option value="">Bitte w&auml;hlen</option>
+<option value="6a">6a</option>
+<option value="6b">6b</option>
+<option value="6c">6c</option>
+<option value="6d">6d</option>
+</select>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h2>&#x1F31F; Mindeststandard</h2>
+<p class="niveau-badge">Nr. 1&ndash;6</p>
+<p style="font-size:13px;color:#888;margin-bottom:12px">Diese Kompetenzen solltest du auf jeden Fall beherrschen.</p>
+
+<div class="item" data-idx="1">
+<div class="item-header">
+<span class="item-num">1</span>
+<span class="item-text">Ich kann Bruchzahlen benennen und den Bruchstrich als &bdquo;geteilt&ldquo; lesen.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item1" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item1" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="2">
+<div class="item-header">
+<span class="item-num">2</span>
+<span class="item-text">Ich kann Teile eines Ganzen vergleichen: gleich gro&szlig;e Teile, mehr oder weniger Teile.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item2" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item2" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="3">
+<div class="item-header">
+<span class="item-num">3</span>
+<span class="item-text">Ich kann einen Bruch in einen Hundertstelbruch umwandeln, indem ich das Ganze in 100 gleiche Teile teile.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item3" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item3" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="4">
+<div class="item-header">
+<span class="item-num">4</span>
+<span class="item-text">Ich kann Hundertstelbr&uuml;che miteinander vergleichen und der Gr&ouml;&szlig;e nach ordnen.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item4" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item4" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="5">
+<div class="item-header">
+<span class="item-num">5</span>
+<span class="item-text">Ich kann Br&uuml;che am Zahlenstrahl darstellen.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item5" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item5" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="6">
+<div class="item-header">
+<span class="item-num">6</span>
+<span class="item-text">Ich kann einen Hundertstelbruch als Dezimalzahl aufschreiben, zum Beispiel m('\frac{7}{100} = 0{,}07').</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item6" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item6" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h2>&#x2B50; Regelstandard</h2>
+<p class="niveau-badge">Nr. 7&ndash;13</p>
+<p style="font-size:13px;color:#888;margin-bottom:12px">Diese Kompetenzen solltest du f&uuml;r eine gute Note beherrschen.</p>
+
+<div class="item" data-idx="7">
+<div class="item-header">
+<span class="item-num">7</span>
+<span class="item-text">Ich kann einen Bruch k&uuml;rzen, indem ich Z&auml;hler und Nenner durch dieselbe Zahl teile.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item7" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item7" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="8">
+<div class="item-header">
+<span class="item-num">8</span>
+<span class="item-text">Ich kann einen Bruch erweitern, indem ich Z&auml;hler und Nenner mit derselben Zahl malnehme.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item8" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item8" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="9">
+<div class="item-header">
+<span class="item-num">9</span>
+<span class="item-text">Ich kann mit Erweitern und K&uuml;rzen pr&uuml;fen, ob zwei Br&uuml;che gleich gro&szlig; sind.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item9" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item9" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="10">
+<div class="item-header">
+<span class="item-num">10</span>
+<span class="item-text">Ich kann Br&uuml;che, Hundertstelbr&uuml;che und Dezimalzahlen miteinander vergleichen.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item10" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item10" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="11">
+<div class="item-header">
+<span class="item-num">11</span>
+<span class="item-text">Ich kann Dezimalzahlen in Br&uuml;che umwandeln &ndash; und umgekehrt.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item11" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item11" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="12">
+<div class="item-header">
+<span class="item-num">12</span>
+<span class="item-text">Ich kann Dezimalzahlen auf der Hunderttafel und am Zahlenstrahl darstellen.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item12" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item12" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="13">
+<div class="item-header">
+<span class="item-num">13</span>
+<span class="item-text">Ich kann Dezimalzahlen nach der Gr&ouml;&szlig;e ordnen und dabei zuerst die Zehntel vergleichen.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item13" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item13" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h2>&#x1F3C6; Expertenstandard</h2>
+<p class="niveau-badge">Nr. 14&ndash;16</p>
+<p style="font-size:13px;color:#888;margin-bottom:12px">Diese Kompetenzen sind das i-T&uuml;pfelchen &ndash; schaffst du sie?</p>
+
+<div class="item" data-idx="14">
+<div class="item-header">
+<span class="item-num">14</span>
+<span class="item-text">Ich kann Dezimalzahlen auf Zehntel oder Hundertstel runden.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item14" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item14" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="15">
+<div class="item-header">
+<span class="item-num">15</span>
+<span class="item-text">Ich kann Dezimalzahlen addieren und subtrahieren.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item15" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item15" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+
+<div class="item" data-idx="16">
+<div class="item-header">
+<span class="item-num">16</span>
+<span class="item-text">Ich kann mit Dezimalzahlen Textaufgaben zu Geld, L&auml;ngen und Massen l&ouml;sen.</span>
+</div>
+<div class="item-options">
+<label><input type="radio" name="item16" value="yes"> &#x2705; Kann ich</label>
+<label><input type="radio" name="item16" value="no"> &#x274C; Muss ich &uuml;ben</label>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="progress-bar"><div class="fill" id="progressFill" style="width:0%"></div></div>
+<div class="btn-wrap">
+<button class="btn btn-primary" id="submitBtn">&#x1F4BE; Ergebnisse speichern</button>
+<button class="btn btn-secondary btn-small" id="resetBtn">Zur&uuml;cksetzen</button>
+</div>
+</div>
+
+<div id="resultSection" class="hidden">
+<div class="card">
+<h2>&#x1F3AF; Dein Ergebnis</h2>
+<div id="resultBox" class="result-box"></div>
+<div id="resultDetail" style="margin-top:16px;font-size:14px;color:#555"></div>
+</div>
+</div>
+
+<div id="attemptsSection" class="hidden">
+<div class="card">
+<h2>&#x1F4C4; Deine bisherigen Versuche</h2>
+<div style="overflow-x:auto"><table class="attempts-table" id="attemptsTable"><thead><tr><th>Datum</th><th>Kurs</th><th>Mindeststd.</th><th>Regelstd.</th><th>Expertenstd.</th><th>Gesamt</th></tr></thead><tbody id="attemptsBody"></tbody></table></div>
+<button class="btn btn-danger btn-small" id="clearAttemptsBtn" style="margin-top:12px">Lokale Versuche l&ouml;schen</button>
+</div>
+</div>
+
+</div>
+
+<script>
+// ========== Firebase ==========
+// >>> FIREBASE-CONFIG: Hier die Werte deines neuen Projekts eintragen <<<
+const firebaseConfig = {
+  apiKey: "AIzaSyChuy_p2eHZRA8X2m-avfGqEB8tQ1jdqOY",
+  authDomain: "brueche-9e841.firebaseapp.com",
+  projectId: "brueche-9e841",
+  storageBucket: "brueche-9e841.firebasestorage.app",
+  messagingSenderId: "597865048513",
+  appId: "1:597865048513:web:1458c84c624b898ba62740"
+};
+firebase.initializeApp(firebaseConfig);
+const dbFire = firebase.firestore();
+
+const COLLECTION = 'brueche_checkliste';
+
+// ========== KaTeX Hilfsfunktion ==========
+function m(latex) {
+  try { return katex.renderToString(latex, {throwOnError:false,displayMode:false}); }
+  catch(e) { return '<span class="katex-error">'+latex+'</span>'; }
+}
+function renderMath(text) {
+  return text.replace(/m\('([^']*)'\)/g, function(_,z){return m(z);});
+}
+
+const ITEMS_TOTAL = 16;
+var MINDS_START = 1, MINDS_END = 6;
+var REGEL_START = 7, REGEL_END = 13;
+var EXP_START = 14, EXP_END = 16;
+
+function showMsg(text, type) {
+  var box = document.getElementById('msgBox');
+  box.textContent = text;
+  box.className = 'msg ' + (type || 'success');
+}
+function hideMsg() {
+  document.getElementById('msgBox').className = 'msg';
+}
+
+function renderItemMath() {
+  document.querySelectorAll('.item-text').forEach(function(el) {
+    el.innerHTML = renderMath(el.textContent);
+  });
+}
+
+function getAnswers() {
+  var answers = [];
+  for (var i = 1; i <= ITEMS_TOTAL; i++) {
+    var radios = document.getElementsByName('item' + i);
+    var val = null;
+    for (var j = 0; j < radios.length; j++) {
+      if (radios[j].checked) { val = radios[j].value; break; }
+    }
+    answers.push({ idx: i, value: val });
+  }
+  return answers;
+}
+
+function countMastered(answers, start, end) {
+  var mastered = 0, total = 0;
+  for (var i = start; i <= end; i++) {
+    var a = answers[i - 1];
+    if (a.value !== null) {
+      total++;
+      if (a.value === 'yes') mastered++;
+    }
+  }
+  return { mastered: mastered, total: total };
+}
+
+function updateProgress() {
+  var answers = getAnswers();
+  var answered = 0;
+  for (var i = 0; i < answers.length; i++) {
+    if (answers[i].value !== null) answered++;
+  }
+  var pct = Math.round((answered / ITEMS_TOTAL) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function attachRadioListeners() {
+  for (var i = 1; i <= ITEMS_TOTAL; i++) {
+    var radios = document.getElementsByName('item' + i);
+    for (var j = 0; j < radios.length; j++) {
+      radios[j].addEventListener('change', function() {
+        updateProgress();
+        var name = this.name;
+        var labels = document.querySelectorAll('.item-options label');
+        labels.forEach(function(lbl) {
+          var inp = lbl.querySelector('input');
+          if (inp && inp.name === name) {
+            lbl.classList.remove('selected-yes', 'selected-no');
+            if (inp.checked) {
+              lbl.classList.add(inp.value === 'yes' ? 'selected-yes' : 'selected-no');
+            }
+          }
+        });
+      });
+    }
+  }
+}
+
+function validateForm() {
+  var name = document.getElementById('name').value.trim();
+  var kurs = document.getElementById('kurs').value;
+  if (!name) { showMsg('Bitte gib deinen Namen ein.', 'error'); return false; }
+  if (!kurs) { showMsg('Bitte wähle deinen Kurs aus.', 'error'); return false; }
+  var answers = getAnswers();
+  for (var i = 0; i < answers.length; i++) {
+    if (answers[i].value === null) {
+      showMsg('Bitte beantworte alle ' + ITEMS_TOTAL + ' Ich-kann-Sätze.', 'error');
+      return false;
+    }
+  }
+  hideMsg();
+  return true;
+}
+
+function saveToLocalStorage(data) {
+  var stored = [];
+  try {
+    stored = JSON.parse(localStorage.getItem('bruecheChecklisteVersuche') || '[]');
+  } catch(e) { stored = []; }
+  stored.unshift(data);
+  if (stored.length > 20) stored = stored.slice(0, 20);
+  localStorage.setItem('bruecheChecklisteVersuche', JSON.stringify(stored));
+}
+
+function loadAttempts() {
+  var stored = [];
+  try {
+    stored = JSON.parse(localStorage.getItem('bruecheChecklisteVersuche') || '[]');
+  } catch(e) { stored = []; }
+  var tbody = document.getElementById('attemptsBody');
+  var section = document.getElementById('attemptsSection');
+  if (stored.length === 0) {
+    section.classList.add('hidden');
+    return;
+  }
+  section.classList.remove('hidden');
+  tbody.innerHTML = '';
+  stored.forEach(function(a) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + (a.datum || '?') + '</td>' +
+      '<td>' + (a.kurs || '?') + '</td>' +
+      '<td>' + a.mindeststandard.mastered + '/' + a.mindeststandard.total + '</td>' +
+      '<td>' + a.regelstandard.mastered + '/' + a.regelstandard.total + '</td>' +
+      '<td>' + a.expertenstandard.mastered + '/' + a.expertenstandard.total + '</td>' +
+      '<td>' + a.gesamtMastered + '/' + a.gesamtTotal + ' (' + a.gesamtProzent + '%)</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function showResult(answers, ms, rs, es, gesamtM, gesamtT, gesamtP) {
+  var section = document.getElementById('resultSection');
+  section.classList.remove('hidden');
+  var box = document.getElementById('resultBox');
+  var detail = document.getElementById('resultDetail');
+
+  var levelClass = 'ok';
+  var feedbackText = '';
+  if (gesamtP >= 80) { levelClass = 'good'; feedbackText = 'Super! Du bist sehr gut vorbereitet.'; }
+  else if (gesamtP >= 50) { levelClass = 'ok'; feedbackText = 'Gut, aber es gibt noch Übungsbedarf.'; }
+  else { levelClass = 'bad'; feedbackText = 'Übe noch einmal gründlich – das schaffst du!'; }
+
+  box.className = 'result-box ' + levelClass;
+  box.innerHTML = '<div class="score">' + gesamtP + '%</div>' +
+    '<div class="score-label">' + gesamtM + ' von ' + gesamtT + ' Kompetenzen gemeistert</div>' +
+    '<div class="feedback" style="margin-top:8px;font-size:16px;font-weight:600">' + feedbackText + '</div>';
+
+  detail.innerHTML =
+    '<span>&#x1F31F; Mindeststandard: <strong>' + ms.mastered + '/' + ms.total + '</strong></span>' +
+    '<span>&#x2B50; Regelstandard: <strong>' + rs.mastered + '/' + rs.total + '</strong></span>' +
+    '<span>&#x1F3C6; Expertenstandard: <strong>' + es.mastered + '/' + es.total + '</strong></span>';
+
+  var itemsToReview = [];
+  for (var i = 0; i < answers.length; i++) {
+    if (answers[i].value === 'no') {
+      itemsToReview.push(answers[i].idx);
+    }
+  }
+  if (itemsToReview.length > 0) {
+    detail.innerHTML += '<p style="margin-top:12px;color:#c62828">&#x1F4D6; Üben solltest du noch: Nr. ' + itemsToReview.join(', ') + '</p>';
+  } else {
+    detail.innerHTML += '<p style="margin-top:12px;color:#2e7d32">&#x1F389; Alle Kompetenzen gemeistert!</p>';
+  }
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function formatDate() {
+  var d = new Date();
+  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
+    ' ' + d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+}
+
+document.getElementById('submitBtn').addEventListener('click', function() {
+  if (!validateForm()) return;
+  var name = document.getElementById('name').value.trim();
+  var kurs = document.getElementById('kurs').value;
+  var answers = getAnswers();
+
+  var ms = countMastered(answers, MINDS_START, MINDS_END);
+  var rs = countMastered(answers, REGEL_START, REGEL_END);
+  var es = countMastered(answers, EXP_START, EXP_END);
+  var gesamtM = ms.mastered + rs.mastered + es.mastered;
+  var gesamtT = ms.total + rs.total + es.total;
+  var gesamtP = Math.round((gesamtM / gesamtT) * 100);
+
+  var datum = formatDate();
+
+  saveToLocalStorage({
+    name: name,
+    kurs: kurs,
+    datum: datum,
+    mindeststandard: ms,
+    regelstandard: rs,
+    expertenstandard: es,
+    gesamtMastered: gesamtM,
+    gesamtTotal: gesamtT,
+    gesamtProzent: gesamtP,
+    antworten: answers
+  });
+  showResult(answers, ms, rs, es, gesamtM, gesamtT, gesamtP);
+  loadAttempts();
+
+  var expireAt = new Date();
+  expireAt.setDate(expireAt.getDate() + 365);
+
+  dbFire.collection(COLLECTION).add({
+    name: name,
+    kurs: kurs,
+    datum: datum,
+    mindeststandard: ms,
+    regelstandard: rs,
+    expertenstandard: es,
+    gesamtMastered: gesamtM,
+    gesamtTotal: gesamtT,
+    gesamtProzent: gesamtP,
+    antworten: answers.map(function(a) { return { idx: a.idx, value: a.value }; }),
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    expireAt: firebase.firestore.Timestamp.fromDate(expireAt)
+  }).then(function() {
+    showMsg('Ergebnisse wurden gespeichert!', 'success');
+  }).catch(function(err) {
+    showMsg('Fehler beim Speichern: ' + err.message, 'error');
+  });
+});
+
+document.getElementById('resetBtn').addEventListener('click', function() {
+  if (!confirm('Alle Eingaben zurücksetzen?')) return;
+  for (var i = 1; i <= ITEMS_TOTAL; i++) {
+    var radios = document.getElementsByName('item' + i);
+    for (var j = 0; j < radios.length; j++) {
+      radios[j].checked = false;
+    }
+  }
+  document.querySelectorAll('.item-options label').forEach(function(lbl) {
+    lbl.classList.remove('selected-yes', 'selected-no');
+  });
+  updateProgress();
+  document.getElementById('resultSection').classList.add('hidden');
+  hideMsg();
+});
+
+document.getElementById('clearAttemptsBtn').addEventListener('click', function() {
+  if (!confirm('Alle lokalen Versuche löschen?')) return;
+  localStorage.removeItem('bruecheChecklisteVersuche');
+  loadAttempts();
+});
+
+var nameInput = document.getElementById('name');
+var kursSelect = document.getElementById('kurs');
+var savedName = localStorage.getItem('bruecheChecklisteName');
+var savedKurs = localStorage.getItem('bruecheChecklisteKurs');
+if (savedName) nameInput.value = savedName;
+if (savedKurs) kursSelect.value = savedKurs;
+nameInput.addEventListener('input', function() { localStorage.setItem('bruecheChecklisteName', this.value); });
+kursSelect.addEventListener('change', function() { localStorage.setItem('bruecheChecklisteKurs', this.value); });
+
+renderItemMath();
+attachRadioListeners();
+updateProgress();
+loadAttempts();
+</script>
+</body>
+</html>

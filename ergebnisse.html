@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ergebnisse – Brüche Klasse 6</title>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;background:linear-gradient(135deg,#fff3e0 0%,#fbe9e7 100%);min-height:100vh;color:#333;padding:20px;line-height:1.6}
+.nav-top{text-align:right;margin-bottom:10px}
+.nav-top a{color:#e65100;text-decoration:none;font-size:14px;font-weight:600}
+.nav-top a:hover{text-decoration:underline}
+.container{max-width:1100px;margin:0 auto}
+h1{text-align:center;color:#bf360c;font-size:28px;margin-bottom:4px}
+.subtitle{text-align:center;color:#e65100;font-size:16px;margin-bottom:24px;font-weight:500}
+.card{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);padding:24px;margin-bottom:20px}
+.card h2{font-size:20px;color:#bf360c;margin-bottom:16px;border-bottom:3px solid #e65100;padding-bottom:8px;display:inline-block}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-weight:600;margin-bottom:4px;color:#555;font-size:14px}
+.form-group select,.form-group input[type="password"]{width:100%;padding:12px 16px;border:2px solid #ddd;border-radius:10px;font-size:16px;transition:border-color .2s;background:#fff}
+.form-group select:focus,.form-group input:focus{outline:none;border-color:#e65100}
+.form-row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+.form-row .form-group{flex:1;min-width:180px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:12px 24px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
+.btn-primary{background:#e65100;color:#fff}
+.btn-primary:hover{background:#bf360c;transform:translateY(-1px);box-shadow:0 4px 12px rgba(230,81,0,.35)}
+.btn-secondary{background:#fff3e0;color:#e65100}
+.btn-secondary:hover{background:#ffe0b2}
+.btn-success{background:#e65100;color:#fff}
+.btn-success:hover{background:#bf360c;box-shadow:0 4px 12px rgba(230,81,0,.3)}
+.btn-danger{background:#c62828;color:#fff}
+.btn-danger:hover{background:#b71c1c}
+.btn-outline{background:transparent;border:2px solid #e65100;color:#e65100}
+.btn-outline:hover{background:#fff3e0}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.btn-small{padding:8px 16px;font-size:13px;border-radius:8px}
+.btn-wrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.mode-toggle{display:flex;gap:8px;margin-bottom:16px}
+.mode-toggle .btn{flex:1;justify-content:center}
+.mode-toggle .btn.active{background:#e65100;color:#fff;box-shadow:0 4px 12px rgba(230,81,0,.35)}
+.msg{display:none;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-weight:500}
+.msg.error{display:block;background:#ffebee;color:#c62828;border:1px solid #ef9a9a}
+.msg.success{display:block;background:#fff3e0;color:#e65100;border:1px solid #ffcc80}
+.msg.info{display:block;background:#e3f2fd;color:#1565c0;border:1px solid #90caf9}
+.hidden{display:none}
+.results-table-wrap{overflow-x:auto;margin-top:12px;max-height:65vh;overflow-y:auto}
+.results-table{width:100%;border-collapse:collapse;font-size:14px}
+.results-table th,.results-table td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee}
+.results-table th{background:#fff3e0;color:#bf360c;font-weight:600;font-size:13px;position:sticky;top:0;white-space:nowrap;z-index:1}
+.results-table tr:hover td{background:#f5f5f5}
+.results-table .empty{text-align:center;color:#999;padding:40px;font-size:15px}
+.status-dot{display:inline-block;width:12px;height:12px;border-radius:50%}
+.status-dot.green{background:#2e7d32}
+.status-dot.orange{background:#ef6c00}
+.status-dot.red{background:#c62828}
+.password-wrap{text-align:center;padding:10px 0}
+.password-wrap .form-group{max-width:400px;margin:0 auto}
+.password-wrap .btn{margin-top:8px}
+.stat-box{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:12px;padding:12px 16px;background:#fafafa;border-radius:12px;width:100%}
+.stat-item{font-size:14px}
+.stat-item strong{color:#bf360c;font-size:18px}
+.review-cell{font-size:12px;color:#c62828;max-width:220px;line-height:1.4}
+@media(max-width:600px){.container{padding:0}.form-row{flex-direction:column}.form-row .form-group{min-width:unset}.btn-wrap{flex-direction:column;align-items:stretch}.btn{justify-content:center}.stat-box{flex-direction:column;gap:8px}.mode-toggle{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="nav-top"><a href="index.html">&larr; Startseite</a></div>
+<div class="container">
+<h1>&#x1F4CA; Ergebnisauswertung</h1>
+<p class="subtitle">Br&uuml;che &amp; Dezimalzahlen Klasse 6</p>
+
+<div id="msgBox" class="msg"></div>
+
+<div id="loginCard" class="card">
+  <h2>&#x1F512; Passwort eingeben</h2>
+  <div class="password-wrap">
+    <div class="form-group">
+      <label for="password">Passwort</label>
+      <input type="password" id="password" placeholder="Passwort eingeben" autocomplete="off">
+    </div>
+    <button class="btn btn-primary" onclick="login()">Best&auml;tigen</button>
+  </div>
+</div>
+
+<div id="resultsCard" class="card hidden">
+  <div class="mode-toggle">
+    <button class="btn btn-outline active" id="modeCheckliste" onclick="setMode('checkliste')">&#x270F;&#xFE0F; Checkliste</button>
+    <button class="btn btn-outline" id="modeSelbsttest" onclick="setMode('selbsttest')">&#x1F4DD; Selbsttest</button>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px">
+    <h2 style="margin-bottom:0">&#x1F4CB; Alle Ergebnisse</h2>
+    <div class="form-group" style="margin-bottom:0;min-width:120px">
+      <select id="filterKurs" onchange="applyFilter()">
+        <option value="">Alle Kurse</option>
+        <option value="6a">6a</option>
+        <option value="6b">6b</option>
+        <option value="6c">6c</option>
+        <option value="6d">6d</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="statsArea"></div>
+
+  <div class="results-table-wrap">
+    <table class="results-table" id="resultsTable">
+      <thead id="tableHead"></thead>
+      <tbody id="resultsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn btn-success" onclick="exportCSV()">CSV exportieren</button>
+    <button class="btn btn-primary" onclick="exportPDF()">PDF exportieren</button>
+    <button class="btn btn-danger" onclick="confirmDeleteAll()">Alle l&ouml;schen</button>
+    <button class="btn btn-secondary" onclick="refreshData()" id="refreshBtn">Aktualisieren</button>
+    <span id="loadInfo" style="font-size:13px;color:#999"></span>
+  </div>
+</div>
+</div>
+
+<script>
+// ========== Firebase ==========
+// >>> FIREBASE-CONFIG: Hier die Werte deines neuen Projekts eintragen <<<
+const firebaseConfig = {
+  apiKey: "AIzaSyChuy_p2eHZRA8X2m-avfGqEB8tQ1jdqOY",
+  authDomain: "brueche-9e841.firebaseapp.com",
+  projectId: "brueche-9e841",
+  storageBucket: "brueche-9e841.firebasestorage.app",
+  messagingSenderId: "597865048513",
+  appId: "1:597865048513:web:1458c84c624b898ba62740"
+};
+firebase.initializeApp(firebaseConfig);
+const dbFire = firebase.firestore();
+
+const COLLECTIONS = {
+  checkliste: 'brueche_checkliste',
+  selbsttest: 'brueche_selbsttest'
+};
+
+// ========== Zustand ==========
+const PASSWORT = "Brueche 2026";
+let currentMode = 'checkliste';
+let allResults = [];
+let filteredResults = [];
+let isLoggedIn = false;
+
+function getCollectionName() {
+  return COLLECTIONS[currentMode];
+}
+
+function getModeLabel() {
+  return currentMode === 'checkliste' ? 'Checkliste' : 'Selbsttest';
+}
+
+// ========== Login ==========
+function login() {
+  const pw = document.getElementById('password').value;
+  const msg = document.getElementById('msgBox');
+  msg.className = 'msg';
+  msg.style.display = 'none';
+  if (pw !== PASSWORT) {
+    showMsg('\u2716 Falsches Passwort.', 'error');
+    return;
+  }
+  isLoggedIn = true;
+  document.getElementById('loginCard').classList.add('hidden');
+  document.getElementById('resultsCard').classList.remove('hidden');
+  loadData();
+}
+
+document.getElementById('password').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') login();
+});
+
+// ========== Modus wechseln ==========
+function setMode(mode) {
+  if (mode === currentMode) return;
+  currentMode = mode;
+  document.getElementById('modeCheckliste').className = 'btn btn-outline' + (mode === 'checkliste' ? ' active' : '');
+  document.getElementById('modeSelbsttest').className = 'btn btn-outline' + (mode === 'selbsttest' ? ' active' : '');
+  renderTableHead();
+  if (isLoggedIn) loadData();
+}
+
+// ========== Daten laden ==========
+async function loadData() {
+  hideMsg();
+  document.getElementById('loadInfo').textContent = 'Lade Daten...';
+  document.getElementById('refreshBtn').disabled = true;
+
+  try {
+    const snapshot = await dbFire.collection(getCollectionName()).get();
+
+    const now = new Date();
+    const deletePromises = [];
+
+    allResults = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const expireAt = data.expireAt ? (data.expireAt.toDate ? data.expireAt.toDate() : new Date(data.expireAt)) : null;
+
+      if (expireAt && expireAt <= now) {
+        deletePromises.push(doc.ref.delete());
+        return;
+      }
+
+      allResults.push({
+        id: doc.id,
+        name: data.name || 'Unbekannt',
+        kurs: data.kurs || '-',
+        datum: data.datum || '',
+        punkte: data.punkte ?? 0,
+        maxPunkte: data.maxPunkte ?? 0,
+        prozent: data.prozent ?? 0,
+        mindeststandard: data.mindeststandard || { mastered: 0, total: 0 },
+        regelstandard: data.regelstandard || { mastered: 0, total: 0 },
+        expertenstandard: data.expertenstandard || { mastered: 0, total: 0 },
+        gesamtMastered: data.gesamtMastered ?? 0,
+        gesamtTotal: data.gesamtTotal ?? 0,
+        gesamtProzent: data.gesamtProzent ?? 0,
+        offen: Array.isArray(data.antworten)
+          ? data.antworten.filter(a => a.value === 'no').map(a => a.idx).sort((x, y) => x - y)
+          : []
+      });
+    });
+
+    if (deletePromises.length > 0) {
+      Promise.all(deletePromises).then(() => {
+        console.log('Gelöschte abgelaufene Einträge: ' + deletePromises.length);
+      });
+    }
+
+    allResults.sort((a, b) => {
+      if (!a.datum && !b.datum) return 0;
+      if (!a.datum) return 1;
+      if (!b.datum) return -1;
+      try {
+        const da = new Date(a.datum.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1').replace(/,.*/, ''));
+        const db = new Date(b.datum.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1').replace(/,.*/, ''));
+        return db - da;
+      } catch(e) { return 0; }
+    });
+
+    document.getElementById('loadInfo').textContent = allResults.length + ' Einträge geladen' + (deletePromises.length > 0 ? ' (' + deletePromises.length + ' abgelaufen entfernt)' : '') + '.';
+    applyFilter();
+
+  } catch(err) {
+    console.error('Fehler beim Laden:', err);
+    showMsg('Fehler beim Laden der Daten: ' + err.message, 'error');
+    document.getElementById('loadInfo').textContent = 'Fehler beim Laden.';
+  } finally {
+    document.getElementById('refreshBtn').disabled = false;
+  }
+}
+
+// ========== Tabellenkopf rendern ==========
+function renderTableHead() {
+  const thead = document.getElementById('tableHead');
+  if (currentMode === 'checkliste') {
+    thead.innerHTML = '<tr><th>Name</th><th>Kurs</th><th>Datum</th><th>Mindest.</th><th>Regel</th><th>Experte</th><th>Gesamt</th><th>&Uuml;ben Nr.</th><th>Status</th></tr>';
+  } else {
+    thead.innerHTML = '<tr><th>Name</th><th>Kurs</th><th>Datum</th><th>Punkte</th><th>Prozent</th><th>Status</th></tr>';
+  }
+}
+
+// ========== Filtern & Tabelle rendern ==========
+function applyFilter() {
+  const kursFilter = document.getElementById('filterKurs').value;
+  filteredResults = kursFilter ? allResults.filter(r => r.kurs === kursFilter) : allResults;
+  renderStats();
+  renderTable();
+}
+
+function getStatusClass(prozent) {
+  if (prozent >= 80) return 'green';
+  if (prozent >= 60) return 'orange';
+  return 'red';
+}
+
+function renderStats() {
+  const area = document.getElementById('statsArea');
+  if (filteredResults.length === 0) {
+    area.innerHTML = '';
+    return;
+  }
+
+  let avgProzent, best, worst;
+
+  if (currentMode === 'checkliste') {
+    const valid = filteredResults.filter(r => r.gesamtTotal > 0);
+    avgProzent = valid.length > 0 ? Math.round(valid.reduce((s, r) => s + r.gesamtProzent, 0) / valid.length) : 0;
+    const withProzent = valid.length > 0 ? valid : filteredResults;
+    best = Math.max(...withProzent.map(r => r.gesamtProzent));
+    worst = Math.min(...withProzent.map(r => r.gesamtProzent));
+  } else {
+    avgProzent = Math.round(filteredResults.reduce((s, r) => s + r.prozent, 0) / filteredResults.length);
+    best = Math.max(...filteredResults.map(r => r.prozent));
+    worst = Math.min(...filteredResults.map(r => r.prozent));
+  }
+
+  area.innerHTML = '<div class="stat-box">' +
+    '<div class="stat-item">&#x1F4CA; Einträge: <strong>' + filteredResults.length + '</strong></div>' +
+    '<div class="stat-item">&#x1F3AF; Durchschnitt: <strong>' + avgProzent + '%</strong></div>' +
+    '<div class="stat-item">&#x1F31F; Beste: <strong>' + best + '%</strong></div>' +
+    '<div class="stat-item">&#x1F4A5; Schlechteste: <strong>' + worst + '%</strong></div>' +
+  '</div>';
+}
+
+function renderTable() {
+  renderTableHead();
+  const tbody = document.getElementById('resultsBody');
+  const cols = currentMode === 'checkliste' ? 9 : 6;
+  if (filteredResults.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="' + cols + '" class="empty">Keine Einträge gefunden.</td></tr>';
+    return;
+  }
+
+  if (currentMode === 'checkliste') {
+    tbody.innerHTML = filteredResults.map(r => {
+      const p = r.gesamtTotal > 0 ? r.gesamtProzent : 0;
+      const sClass = getStatusClass(p);
+      const gesamtText = r.gesamtTotal > 0 ? r.gesamtMastered + '/' + r.gesamtTotal : '-';
+      const offenText = r.offen.length > 0 ? r.offen.join(', ') : '-';
+      return '<tr>' +
+        '<td>' + escHtml(r.name) + '</td>' +
+        '<td>' + escHtml(r.kurs) + '</td>' +
+        '<td>' + escHtml(r.datum) + '</td>' +
+        '<td>' + (r.mindeststandard ? r.mindeststandard.mastered + '/' + r.mindeststandard.total : '-') + '</td>' +
+        '<td>' + (r.regelstandard ? r.regelstandard.mastered + '/' + r.regelstandard.total : '-') + '</td>' +
+        '<td>' + (r.expertenstandard ? r.expertenstandard.mastered + '/' + r.expertenstandard.total : '-') + '</td>' +
+        '<td>' + gesamtText + '</td>' +
+        '<td><div class="review-cell">' + escHtml(offenText) + '</div></td>' +
+        '<td><span class="status-dot ' + sClass + '"></span></td>' +
+      '</tr>';
+    }).join('');
+  } else {
+    tbody.innerHTML = filteredResults.map(r => {
+      const sClass = getStatusClass(r.prozent);
+      return '<tr>' +
+        '<td>' + escHtml(r.name) + '</td>' +
+        '<td>' + escHtml(r.kurs) + '</td>' +
+        '<td>' + escHtml(r.datum) + '</td>' +
+        '<td>' + r.punkte + (r.maxPunkte > 0 ? '/' + r.maxPunkte : '') + '</td>' +
+        '<td>' + r.prozent + '%</td>' +
+        '<td><span class="status-dot ' + sClass + '"></span></td>' +
+      '</tr>';
+    }).join('');
+  }
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : s;
+  return d.innerHTML;
+}
+
+// ========== CSV export ==========
+function exportCSV() {
+  const rows = filteredResults;
+  if (rows.length === 0) {
+    showMsg('Keine Daten zum Exportieren.', 'error');
+    return;
+  }
+
+  let csv, header;
+
+  if (currentMode === 'checkliste') {
+    header = 'Name;Kurs;Datum;Mindest.;Regel;Experte;Gesamt Mastered;Gesamt Total;Gesamt %;Üben Nr.';
+    csv = header + '\n';
+    rows.forEach(r => {
+      const mindest = r.mindeststandard ? r.mindeststandard.mastered + '/' + r.mindeststandard.total : '-';
+      const regel = r.regelstandard ? r.regelstandard.mastered + '/' + r.regelstandard.total : '-';
+      const experte = r.expertenstandard ? r.expertenstandard.mastered + '/' + r.expertenstandard.total : '-';
+      csv += '"' + r.name + '";"' + r.kurs + '";"' + r.datum + '";"' + mindest + '";"' + regel + '";"' + experte + '";' + r.gesamtMastered + ';' + r.gesamtTotal + ';' + r.gesamtProzent + ';"' + (r.offen.length > 0 ? r.offen.join(' ') : '-') + '"\n';
+    });
+  } else {
+    header = 'Name;Kurs;Datum;Punkte;Max;Prozent';
+    csv = header + '\n';
+    rows.forEach(r => {
+      csv += '"' + r.name + '";"' + r.kurs + '";"' + r.datum + '";' + r.punkte + ';' + r.maxPunkte + ';' + r.prozent + '\n';
+    });
+  }
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  const datum = new Date().toISOString().slice(0, 10);
+  const kursLabel = document.getElementById('filterKurs').value || 'alle';
+  link.download = 'brueche_ergebnisse_' + currentMode + '_' + kursLabel + '_' + datum + '.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+  showMsg('CSV exportiert.', 'success');
+}
+
+// ========== PDF export ==========
+function exportPDF() {
+  const rows = filteredResults;
+  if (rows.length === 0) {
+    showMsg('Keine Daten zum Exportieren.', 'error');
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  doc.setFontSize(18);
+  doc.setTextColor(191, 54, 12);
+  doc.text('Ergebnisse - Brüche Klasse 6', 14, 20);
+
+  doc.setFontSize(11);
+  doc.setTextColor(100);
+  const kursFilter = document.getElementById('filterKurs').value;
+  doc.text('Modus: ' + getModeLabel() + '  |  Kurs: ' + (kursFilter || 'Alle') + '  |  Einträge: ' + rows.length + '  |  Exportiert: ' + new Date().toLocaleDateString('de-DE'), 14, 28);
+
+  let head, body;
+
+  if (currentMode === 'checkliste') {
+    head = [['Name', 'Kurs', 'Datum', 'Mindest.', 'Regel', 'Experte', 'Gesamt', 'Üben Nr.', 'Status']];
+    body = rows.map(r => {
+      const p = r.gesamtTotal > 0 ? r.gesamtProzent : 0;
+      const sClass = getStatusClass(p);
+      const statusSymbol = sClass === 'green' ? '●' : (sClass === 'orange' ? '●' : '●');
+      const mindest = r.mindeststandard ? r.mindeststandard.mastered + '/' + r.mindeststandard.total : '-';
+      const regel = r.regelstandard ? r.regelstandard.mastered + '/' + r.regelstandard.total : '-';
+      const experte = r.expertenstandard ? r.expertenstandard.mastered + '/' + r.expertenstandard.total : '-';
+      const gesamt = r.gesamtTotal > 0 ? r.gesamtMastered + '/' + r.gesamtTotal : '-';
+      return [r.name, r.kurs, r.datum, mindest, regel, experte, gesamt, r.offen.length > 0 ? r.offen.join(', ') : '-', statusSymbol];
+    });
+  } else {
+    head = [['Name', 'Kurs', 'Datum', 'Punkte', 'Prozent', 'Status']];
+    body = rows.map(r => {
+      const sClass = getStatusClass(r.prozent);
+      const statusSymbol = sClass === 'green' ? '●' : (sClass === 'orange' ? '●' : '●');
+      return [r.name, r.kurs, r.datum, String(r.punkte) + (r.maxPunkte > 0 ? '/' + r.maxPunkte : ''), r.prozent + '%', statusSymbol];
+    });
+  }
+
+  doc.autoTable({
+    startY: 34,
+    head: head,
+    body: body,
+    theme: 'grid',
+    headStyles: { fillColor: [230, 81, 0], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 10 },
+    bodyStyles: { fontSize: 9 },
+    alternateRowStyles: { fillColor: [245, 245, 245] },
+    margin: { top: 34 }
+  });
+
+  const datum = new Date().toISOString().slice(0, 10);
+  const kursLabel = document.getElementById('filterKurs').value || 'alle';
+  doc.save('brueche_ergebnisse_' + currentMode + '_' + kursLabel + '_' + datum + '.pdf');
+  showMsg('PDF exportiert.', 'success');
+}
+
+// ========== Alle löschen ==========
+async function confirmDeleteAll() {
+  if (!confirm('Wirklich ALLE ' + getModeLabel() + '-Ergebnisse löschen? Diese Aktion kann nicht rückgängig gemacht werden!')) return;
+
+  hideMsg();
+
+  try {
+    const snapshot = await dbFire.collection(getCollectionName()).get();
+    const deletePromises = [];
+    snapshot.forEach(doc => deletePromises.push(doc.ref.delete()));
+    await Promise.all(deletePromises);
+    allResults = [];
+    applyFilter();
+    showMsg('Alle ' + deletePromises.length + ' Einträge wurden gelöscht.', 'success');
+    document.getElementById('loadInfo').textContent = 'Keine Einträge.';
+  } catch(err) {
+    showMsg('Fehler beim Löschen: ' + err.message, 'error');
+  }
+}
+
+// ========== Aktualisieren ==========
+function refreshData() {
+  loadData();
+}
+
+// ========== Hilfsfunktionen ==========
+let msgTimer = null;
+function showMsg(text, type) {
+  const box = document.getElementById('msgBox');
+  box.innerHTML = text;
+  box.className = 'msg ' + type;
+  box.style.display = 'block';
+  if (msgTimer) clearTimeout(msgTimer);
+  msgTimer = setTimeout(() => { box.style.display = 'none'; }, 5000);
+}
+function hideMsg() {
+  const box = document.getElementById('msgBox');
+  box.className = 'msg';
+  box.style.display = 'none';
+  if (msgTimer) clearTimeout(msgTimer);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderTableHead();
+  document.getElementById('password').focus();
+});
+</script>
+</body>
+</html>
